@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Animacja</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="script.js"></script>
+    <style type="text/css">
+    .obraz {
+        margin-top: 35px;
+        margin-right: 5px;
+        transition: transform 0.5s ease;
+        position: relative;
+    }
+    .opis {
+        display: none;
+        text-align: center;
+        font-size: 14px;
+        margin-top: 5px;
+        position: absolute;
+        z-index: 3;
+        border: white 2px solid;
+        background: white;
+    }
+    .container {
+        display: inline-block;
+        text-align: center;
+        position: relative;
+        vertical-align: top;
+    }
+    </style>
+</head>
+<body>
+<div class="container">
+    <img class="obraz" src="obraz1.jpg" alt="Obraz1">
+    <div class="opis">Zielony uśmiech</div>
+</div>
+<div class="container">
+    <img class="obraz" src="obraz2.png" alt="Obraz2" width="150" height="150">
+    <div class="opis">Zadanie domowe na UTK klasa 2</div>
+</div>
+<div class="container">
+    <img class="obraz" src="obraz3.jpg" alt="Obraz3" width="150" height="150">
+    <div class="opis">Aktor Ryan Gosling w filmie Drive</div>
+</div>
+</body>
+</html>
