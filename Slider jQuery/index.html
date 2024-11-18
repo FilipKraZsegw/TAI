@@ -1,0 +1,57 @@
+<html>
+    <head>
+        <title>Slider w jQuery</title>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script type="text/javascript" src="script.js"></script>
+        <style>
+            .slider-container{
+                width: 100%;
+                max-width: 600px;
+                overflow: hidden;
+                position: relative;
+                display: flex;
+                margin: auto;
+            }
+            .slider{
+                display: flex;
+                transition: transform 0.5s ease;
+            }
+            .slide{
+                min-width: 100%;
+            }
+            .prev, .next{ 
+                position: absolute;
+                top: 50%; 
+                transform: translateY(-50%);
+                padding: 10px;
+                background-color: rgba(0, 0, 0, 0.5);
+                color: white;
+                cursor: pointer;
+                font-size: 24px;
+            }
+            .prev{
+                left: 10px;
+            }
+            .next{
+                right: 10px;
+            }
+            .slider img{
+                margin: auto;
+                display: block;
+                height: 100%;
+                width: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="slider-container">
+            <div class="slider">
+                <div class="slide"><img src="obraz1.jpg"></div>
+                <div class="slide"><img src="obraz2.png"></div>
+                <div class="slide"><img src="obraz3.jpg"></div>
+            </div>
+            <span class="prev">❮</span>
+            <span class="next">❯</span>
+        </div>
+    </body>
+</html>
