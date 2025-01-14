@@ -1,72 +1,142 @@
 $(document).ready(function() {
-    const canvas = document.querySelector("canvas");
-    const ctx = canvas.getContext("2d");
+    const plansza = document.querySelector("canvas");
+    const kontekst = plansza.getContext("2d");
 
-    const kwadrat1 = [{
-        id: "kwadrat1",
-        x: 290,
-        y: 0,
-        width: 20,
-        height: 20,
-        color: 'yellow',
-        zablokowany: false
-    }];
+    const szerokoscPlanszy = plansza.width;
+    const wysokoscPlanszy = plansza.height;
+    const rozmiarBloku = 30; // Zwiększenie rozmiaru bloku
 
-    const canvasWidth = canvas.width;
-    const canvasHeight = canvas.height;
+    // Tablica reprezentująca planszę
+    const siatka = Array.from({ length: wysokoscPlanszy / rozmiarBloku }, () => 
+        Array(szerokoscPlanszy / rozmiarBloku).fill(null)
+    );
 
-    function rysujKwadrat() {
-        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-        kwadrat1.forEach(kwadrat => {
-            ctx.save();
-            ctx.translate(kwadrat.x, kwadrat.y);
-            ctx.fillStyle = kwadrat.color;
-            ctx.beginPath();
-            ctx.moveTo(0, 0);
-            ctx.lineTo(20, 0);
-            ctx.lineTo(20, 20);
-            ctx.lineTo(0, 20);
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
-            ctx.restore();
+    // Definicje kształtów
+    const kształty = [
+        { id: "T", kolor: "blue", bloki: [[1, 0], [0, 1], [1, 1], [2, 1]] },
+        { id: "L", kolor: "blue", bloki: [[1, 0], [1, 1], [1, 2], [2, 2]] },
+        { id: "I", kolor: "blue", bloki: [[1, 0], [1, 1], [1, 2], [1, 3]] },
+        { id: "O", kolor: "blue", bloki: [[0, 0], [1, 0], [0, 1], [1, 1]] },
+        { id: "S", kolor: "blue", bloki: [[1, 0], [2, 0], [0, 1], [1, 1]] }
+    ];
+
+    let aktualnyKształt = null;
+    let aktualneX = 0;
+    let aktualneY = 0;
+
+    function rysujPlansze() {
+        kontekst.clearRect(0, 0, szerokoscPlanszy, wysokoscPlanszy);
+        // Rysowanie siatki
+        for (let y = 0; y < siatka.length; y++) {
+            for (let x = 0; x < siatka[y].length; x++) {
+                if (siatka[y][x]) {
+                    kontekst.fillStyle = siatka[y][x];
+                    kontekst.fillRect(x * rozmiarBloku, y * rozmiarBloku, rozmiarBloku, rozmiarBloku);
+                }
+            }
+        }
+
+        // Rysowanie aktualnego kształtu
+        if (aktualnyKształt) {
+            kontekst.fillStyle = aktualnyKształt.kolor;
+            aktualnyKształt.bloki.forEach(([dx, dy]) => {
+                const x = aktualneX + dx;
+                const y = aktualneY + dy;
+                kontekst.fillRect(x * rozmiarBloku, y * rozmiarBloku, rozmiarBloku, rozmiarBloku);
+            });
+        }
+    }
+
+    function kolizja(przesuniecieX = 0, przesuniecieY = 0) {
+        return aktualnyKształt.bloki.some(([dx, dy]) => {
+            const x = aktualneX + dx + przesuniecieX;
+            const y = aktualneY + dy + przesuniecieY;
+            return (
+                x < 0 ||
+                x >= szerokoscPlanszy / rozmiarBloku ||
+                y >= wysokoscPlanszy / rozmiarBloku ||
+                (y >= 0 && siatka[y][x])
+            );
         });
     }
 
-    rysujKwadrat();
-
-    let x = 290;
-    let y = 0;
-
-    document.addEventListener('keydown', (event) => {
-        const kwadrat = kwadrat1.find(k => k.id === "kwadrat1");
-        if (kwadrat && !kwadrat.zablokowany) {
-            switch (event.key) {
-                case 'ArrowLeft':
-                    if (x != 0)
-                        x -= 10;
-                    break;
-                case 'ArrowRight':
-                    if (x != 580)
-                        x += 10;
-                    break;
+    function zablokujKształt() {
+        aktualnyKształt.bloki.forEach(([dx, dy]) => {
+            const x = aktualneX + dx;
+            const y = aktualneY + dy;
+            if (y >= 0) {
+                siatka[y][x] = aktualnyKształt.kolor;
             }
-            kwadrat.x = x;
-            kwadrat.y = y;
-            rysujKwadrat();
+        });
+        usunPelneLinie();
+        wylosujKształt();
+    }
+
+    function usunPelneLinie() {
+        for (let y = siatka.length - 1; y >= 0; y--) {
+            if (siatka[y].every(komorka => komorka)) {
+                siatka.splice(y, 1);
+                siatka.unshift(Array(szerokoscPlanszy / rozmiarBloku).fill(null));
+                y++; // Sprawdzamy tę samą linię ponownie po przesunięciu
+            }
         }
+    }
+
+    function wylosujKształt() {
+        const indeks = Math.floor(Math.random() * kształty.length);
+        aktualnyKształt = { ...kształty[indeks], bloki: [...kształty[indeks].bloki] };
+        aktualneX = Math.floor(szerokoscPlanszy / rozmiarBloku / 2) - 1;
+        aktualneY = -2;
+
+        if (kolizja()) {
+            alert("Koniec Gry");
+            resetujGrę();
+        }
+    }
+
+    function resetujGrę() {
+        for (let y = 0; y < siatka.length; y++) {
+            siatka[y].fill(null);
+        }
+        wylosujKształt();
+    }
+
+    document.addEventListener("keydown", event => {
+        if (!aktualnyKształt) return;
+
+        switch (event.key) {
+            case "ArrowLeft":
+                if (!kolizja(-1)) {
+                    aktualneX--;
+                }
+                break;
+            case "ArrowRight":
+                if (!kolizja(1)) {
+                    aktualneX++;
+                }
+                break;
+            case "ArrowDown":
+                if (!kolizja(0, 1)) {
+                    aktualneY++;
+                }
+                break;
+        }
+        rysujPlansze();
     });
 
-    setInterval(() => {
-        const kwadrat = kwadrat1.find(k => k.id === "kwadrat1");
-        if (kwadrat && !kwadrat.zablokowany) {
-            if (kwadrat.y < 580) {
-                y += 20;
-                kwadrat.y = y;
-            } else {
-                kwadrat.zablokowany = true;
-            }
+    function petlaGry() {
+        if (!aktualnyKształt) return;
+
+        if (!kolizja(0, 1)) {
+            aktualneY++;
+        } else {
+            zablokujKształt();
         }
-        rysujKwadrat();
-    }, 500);
+
+        rysujPlansze();
+    }
+
+    setInterval(petlaGry, 500);
+
+    wylosujKształt();
 });
