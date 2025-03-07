@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="script.js"></script>
+    <title>Walidacja Formularza</title>
+    <style>
+        body{
+            font-family: Arial;
+            margin: 20px;
+        }
+        form{
+        	width: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+        label{
+            margin-bottom: 10px;
+        }
+        input{
+        	margin-bottom: 10px;
+        }
+        button{
+        	margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <form id="formularz">
+        <label>Imię: <input type="text" id="imie"></label>
+        <label>Nazwisko: <input type="text" id="nazwisko"></label>
+        <label>Wiek: <input type="number" id="wiek"></label>
+        <label>Email: <input type="email" id="email"></label>
+        <label>Ulica: <input type="text" id="ulica"></label>
+        <label>Numer domu: <input type="text" id="nr_domu"></label>
+        <label>Numer mieszkania: <input type="text" id="nr_mieszkania"></label>
+        <label>Kod pocztowy: <input type="text" id="kod"></label>
+        <label>Miasto: <input type="text" id="miasto"></label>
+        <button type="button" onclick="sprawdz()">Wyślij</button>
+        <button type="reset">Reset</button>
+    </form>
+    <div id="wynik"></div>
+
+</body>
+</html>
