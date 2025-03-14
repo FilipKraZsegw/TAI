@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formularz</title>
+    <style>
+        .ukryte{
+        	display: none; 
+        }
+        form{
+        	margin: 20px;
+        }
+        input,select,div{
+        	margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <form id="formularzKontaktowy">
+        <label for="imie">Imię:</label>
+        <input type="text" id="imie" name="imie" required>
+        <br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <br>
+
+        <label for="temat">Temat wiadomości:</label>
+        <select id="temat" name="temat" required>
+            <option value="">Wybierz temat</option>
+            <option value="wsparcie">Wsparcie techniczne</option>
+            <option value="opinia">Opinie</option>
+        </select>
+        <br>
+
+        <div id="oknoProblemu" class="ukryte">
+            <label for="problem">Opis problemu:</label>
+            <textarea id="problem" name="problem"></textarea>
+        </div>
+
+        <div id="oknoOpini" class="ukryte">
+            <label for="ocena">Ocena (1-5):</label>
+            <input type="number" id="ocena" name="ocena" min="1" max="5">
+        </div>
+        <br>
+
+        <button type="submit">Wyślij</button>
+    </form>
+
+    <p id="message" class="ukryte">Formularz został wysłany</p>
+
+    <script>
+        document.getElementById('temat').addEventListener('change', function() {
+            const oknoProblemu = document.getElementById('oknoProblemu');
+            const oknoOpini = document.getElementById('oknoOpini');
+
+            oknoProblemu.classList.add('ukryte');
+            oknoOpini.classList.add('ukryte');
+
+            if (this.value === 'wsparcie') {
+                oknoProblemu.classList.remove('ukryte');
+            } else if (this.value === 'opinia') {
+                oknoOpini.classList.remove('ukryte');
+            }
+        });
+
+        document.getElementById('formularzKontaktowy').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const imie = document.getElementById('imie').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const temat = document.getElementById('temat').value;
+            const problem = document.getElementById('problem').value.trim();
+            const ocena = Number(document.getElementById('ocena').value);
+
+            if (!imie || !email || !temat) {
+                alert('Wszystkie wymagane pola muszą być wypełnione');
+                return;
+            }
+
+            if (temat === 'wsparcie' && !problem) {
+                alert('Podaj opis problemu');
+                return;
+            }
+
+            if (temat === 'opinia' && (isNaN(ocena) || ocena < 1 || ocena > 5)) {
+                alert('Podaj ocenę w skali 1-5');
+                return;
+            }
+
+            document.getElementById('message').classList.remove('ukryte');
+            this.reset();
+
+            document.getElementById('oknoProblemu').classList.add('ukryte');
+            document.getElementById('oknoOpini').classList.add('ukryte');
+        });
+    </script>
+</body>
+</html>
