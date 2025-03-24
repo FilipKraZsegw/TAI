@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamiczny Formularz</title>
+    <style>
+        body{
+            font-family: Arial;
+        }
+        .adresEmail{
+            margin-bottom: 10px;
+        }
+        .guzikUsun{margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <form id="formularzKontaktowy">
+        <label for="imie">Imię:</label>
+        <input type="text" id="imie" name="imie" required>
+        <br>
+        
+        <label for="nazwisko">Nazwisko:</label>
+        <input type="text" id="nazwisko" name="nazwisko" required>
+        <br>
+        
+        <label for="wiek">Wiek:</label>
+        <input type="number" id="wiek" name="wiek" required>
+        <br>
+        
+        <label>Email:</label>
+        <div id="Emaile">
+            <div class="adresEmail">
+                <input type="email" class="email" required>
+                <button type="button" class="guzikUsun" onclick="usunEmail(this)">Usuń</button>
+            </div>
+        </div>
+        <button type="button" onclick="dodajEmail()">Dodaj e-mail</button>
+        <br><br>
+        
+        <label for="typUrzytkownika">Typ użytkownika:</label>
+        <select id="typUrzytkownika" name="typUrzytkownika" onchange="pokazNip()" required>
+            <option value="osoba">Osoba fizyczna</option>
+            <option value="firma">Firma</option>
+        </select>
+        <br>
+        
+        <div id="podajNip" style="display: none;">
+            <label for="nip">NIP:</label>
+            <input type="text" id="nip" name="nip">
+        </div>
+        <br>
+        
+        <button type="button" onclick="zapiszDane()">Zapisz</button>
+    </form>
+    
+    <script>
+        function dodajEmail() {
+            const container = document.getElementById("Emaile");
+            const div = document.createElement("div");
+            div.classList.add("adresEmail");
+            div.innerHTML = '<input type="email" class="email" required> <button type="button" class="guzikUsun" onclick="usunEmail(this)">Usuń</button>';
+            container.appendChild(div);
+        }
+
+        function usunEmail(button) {
+            button.parentElement.remove();
+        }
+
+        function pokazNip() {
+            const podajNip = document.getElementById("podajNip");
+            const typUrzytkownika = document.getElementById("typUrzytkownika").value;
+            podajNip.style.display = typUrzytkownika === "firma" ? "block" : "none";
+        }
+
+        function zapiszDane() {
+            const daneFormularza = {
+                imie: document.getElementById("imie").value,
+                nazwisko: document.getElementById("nazwisko").value,
+                wiek: document.getElementById("wiek").value,
+                emails: Array.from(document.querySelectorAll(".email")).map(input => input.value),
+                typ: document.getElementById("typUrzytkownika").value
+            };
+            if (daneFormularza.typ === "firma") {
+                daneFormularza.nip = document.getElementById("nip").value;
+            }
+            console.log(daneFormularza);
+        }
+    </script>
+</body>
+</html>
